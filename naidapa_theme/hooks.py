@@ -1,5 +1,5 @@
 app_name = "naidapa_theme"
-app_title = "Naidapa Theme"
+app_title = "Retail Theme"
 app_publisher = "Naidapa Technologies"
 app_description = "A Frappe Theme"
 app_email = "iammusabutt@gmail.com"

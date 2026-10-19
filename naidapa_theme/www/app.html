@@ -6,14 +6,15 @@
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
-    <title>Naidapa Theme App</title>
+    <title>{{ app_name | e }}</title>
+    <link rel="icon" href="{{ theme_settings.get('favicon_image') or '/assets/naidapa_theme/images/retail-mark.svg' }}">
 
     {% for include in include_css -%}
     {{ include_style(include) }}
     {%- endfor -%}
 </head>
 
-<body>
+<body class="{{ 'rtl' if layout_direction == 'rtl' else '' }}">
 
     {% include "naidapa_theme/templates/includes/ocean/main.html" %}
 

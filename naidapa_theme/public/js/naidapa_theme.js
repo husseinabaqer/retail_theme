@@ -113,7 +113,7 @@
     };
 
     naidapa_theme.update_sidebar_logo = function () {
-        const logo_url = (frappe.boot && frappe.boot.sidebar_logo) || "/files/dr-codex-logo.png";
+        const logo_url = (frappe.boot && frappe.boot.sidebar_logo) || "/assets/naidapa_theme/images/retail-mark.svg";
         const $appLogo = $('.vertical-sidebar .app-logo');
 
         if ($appLogo.length) {
@@ -264,7 +264,8 @@
     };
 
     naidapa_theme.remove_native_elements = function () {
-        $('.layout-side-section, .sidebar-toggle-btn, .desk-sidebar').hide();
+        $('.desk-sidebar').closest('.layout-side-section').hide();
+        $('.desk-sidebar').hide();
     };
 
     naidapa_theme.mutate_workspace_container = function () {
@@ -333,14 +334,32 @@
         };
     });
 
-    const observer = new MutationObserver(() => {
-        naidapa_theme.run_patches();
+    // Batch asynchronous page additions; do not observe our own DOM edits.
+    // This avoids repeatedly scanning the page for every rendered table row.
+    let patch_timer = null;
+    const patch_targets = '.page-container, .workspace-container, .number-widget-box, .navbar, [data-fieldname="custom_animated_icon"]';
+    const observer_options = { childList: true, subtree: true };
+    const observer = new MutationObserver((records) => {
+        const relevant = records.some(record => Array.from(record.addedNodes).some(node =>
+            node.nodeType === 1 && (node.matches(patch_targets) || node.querySelector(patch_targets))
+        ));
+        if (!relevant || patch_timer !== null) return;
+        patch_timer = setTimeout(() => {
+            patch_timer = null;
+            observer.disconnect();
+            try {
+                naidapa_theme.run_patches();
+                naidapa_theme.mutate_charts();
+            } finally {
+                observer.observe(document.body, observer_options);
+            }
+        }, 60);
     });
 
     $(document).ready(() => {
         naidapa_theme.setup();
         naidapa_theme.mutate_charts(); // Try patching immediately
-        observer.observe(document.body, { childList: true, subtree: true });
+        observer.observe(document.body, observer_options);
     });
 
     $(document).on('app_ready page-change', function () {

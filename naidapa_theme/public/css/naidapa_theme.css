@@ -211,21 +211,9 @@ select.input-with-feedback {
     cursor: pointer;
 }
 
-/* Permanently hide Frappe's native workspace sidebars everywhere */
-.layout-side-section,
-.desk-sidebar,
-.sidebar-toggle-btn,
-body.naidapa-theme-active .layout-side-section,
-body.naidapa-theme-active .sidebar-toggle-btn,
+/* Replace the workspace menu, while retaining native list/report filters. */
 body.naidapa-theme-active .desk-sidebar {
     display: none !important;
-    width: 0 !important;
-    max-width: 0 !important;
-    min-width: 0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border: none !important;
-    overflow: hidden !important;
 }
 
 body.naidapa-theme-active .layout-main-section,

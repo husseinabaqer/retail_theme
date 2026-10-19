@@ -42,6 +42,7 @@ def get_desktop_pages():
         workspace_orders = []
 
     if workspace_orders:
+        allowed = {page["name"] for page in get_workspace_sidebar_items().get("pages", [])}
         menu_items = []
         groups_map = {}
 
@@ -49,7 +50,7 @@ def get_desktop_pages():
         sorted_orders = sorted(workspace_orders, key=lambda x: int(x.idx or 0))
 
         for row in sorted_orders:
-            if not row.workspace:
+            if not row.workspace or row.workspace not in allowed:
                 continue
             ws_title = row.workspace_label or frappe.db.get_value("Workspace", row.workspace, "title") or row.workspace
             ws_icon = resolve_icon(ws_title, row.icon or frappe.db.get_value("Workspace", row.workspace, "custom_animated_icon"))
@@ -124,7 +125,7 @@ def get_desktop_pages():
 def boot_session(bootinfo):
     try:
         theme_settings = frappe.get_cached_doc("Theme Settings")
-        bootinfo.sidebar_logo = theme_settings.get("sidebar_logo") or "/files/dr-codex-logo.png"
+        bootinfo.sidebar_logo = theme_settings.get("sidebar_logo") or "/assets/naidapa_theme/images/retail-mark.svg"
         bootinfo.theme_settings = theme_settings.as_dict()
     except Exception:
-        bootinfo.sidebar_logo = "/files/dr-codex-logo.png"
+        bootinfo.sidebar_logo = "/assets/naidapa_theme/images/retail-mark.svg"
